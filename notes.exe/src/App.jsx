@@ -1,10 +1,10 @@
 import { useState } from "react";
-import Header from "./components/Header";
-import Sidebar from "./components/Sidebar";
-import MainContent from "./components/MainContent";
-import NotificationPanel from "./components/NotificationPanel";
-import CalendarView from "./components/CalendarView";
-import Modal from "./components/Modal";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import MainContent from "./MainContent";
+import NotificationPanel from "./NotificationPanel";
+import CalendarView from "./CalenderView";
+import Modal from "./Modal";
 
 function App() {
   const [appData, setAppData] = useState({
