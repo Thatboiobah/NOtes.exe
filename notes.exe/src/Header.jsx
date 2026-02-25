@@ -1,24 +1,18 @@
+function Header({ theme, toggleTheme, toggleNotifications, toggleCalendar }) {
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString("en-GB");
 
-function Header(){
-    return(
-        <header>
-            <nav>
-                <div>
-                    <img src="#" alt="logo" />
-                </div>
-
-                <div>
-                    <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#"><img src="#" alt="bell-icon" /></a></li>
-                        <li><a href="#"><img src="#" alt="sche" /></a></li>
-                    </ul>
-                </div>
-            </nav>
-            <hr />
-            <hr />
-        </header>
-    )
+  return (
+    <header>
+      <h1>notes.exe</h1>
+      <div>
+        <span>{formattedDate}</span>
+        <button onClick={toggleNotifications}>Bell</button>
+        <button onClick={toggleCalendar}>Calendar</button>
+        <button onClick={toggleTheme}>Toggle Theme</button>  
+      </div>
+    </header>
+  );
 }
 
-export default Header
+export default Header;
