@@ -3,8 +3,10 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
 import Modal from "./Modal";
+import { generateNotifications } from "./utils/notificationEngine";
 
 function App() {
+    
   const [appData, setAppData] = useState(() => {
   try {
     const storedData = localStorage.getItem("studyPlannerData");
@@ -14,6 +16,8 @@ function App() {
     return { classes: [] };
   }
 });
+
+
 
   useEffect(() => {
   localStorage.setItem("studyPlannerData", JSON.stringify(appData));
@@ -28,9 +32,12 @@ function App() {
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
+ // const notifications = generateNotifications(state.classes);
   const selectedClass = appData.classes.find(
     (cls) => cls.id === selectedClassId
   );
+
+  
 
   const addClass = (name) => {
     const newClass = {
