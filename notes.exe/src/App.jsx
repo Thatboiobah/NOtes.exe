@@ -1,16 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
-import NotificationPanel from "./NotificationPanel";
-import CalendarView from "./CalenderView";
 import Modal from "./Modal";
 
 function App() {
-  const [appData, setAppData] = useState({
-    username: "Sir",
-    classes: []
-  });
+  const [appData, setAppData] = useState(() => {
+  try {
+    const storedData = localStorage.getItem("studyPlannerData");
+    return storedData ? JSON.parse(storedData) : { classes: [] };
+  } catch (error) {
+    console.error("Storage corrupted. Resetting...");
+    return { classes: [] };
+  }
+});
+
+  useEffect(() => {
+  localStorage.setItem("studyPlannerData", JSON.stringify(appData));
+}, [appData]); 
 
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeTab, setActiveTab] = useState("lectures");
