@@ -1,3 +1,4 @@
+// src/Lectures.jsx
 function Lectures({
   selectedClass,
   setIsModalOpen,

@@ -1,3 +1,4 @@
+// src/MainContent.jsx
 import Tabs from "./Tabs";
 import Lectures from "./Lectures";
 import Notes from "./Notes";

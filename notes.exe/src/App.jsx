@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useReducer, useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";

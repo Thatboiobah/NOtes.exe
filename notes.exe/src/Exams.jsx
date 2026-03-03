@@ -1,3 +1,4 @@
+// src/Exams.jsx
 function Exams({
   selectedClass,
   setIsModalOpen,

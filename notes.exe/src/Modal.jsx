@@ -1,3 +1,4 @@
+// src/Modal.jsx
 import { useState, useEffect } from "react";
 
 function Modal({

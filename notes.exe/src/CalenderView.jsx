@@ -1,15 +1,20 @@
+// src/CalenderView.jsx
 import { useState } from "react";
+import "./calender.css";
 
 function CalenderPanel({
+  isOpen,
+  onClose,
   selectedDate,
   setSelectedDate,
   events,
   setEvents,
 }) {
+  if (!isOpen) return null;
+
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth();
-
   const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
   const daysArray = Array.from({ length: lastDay }, (_, i) => i + 1);
 
@@ -39,66 +44,50 @@ function CalenderPanel({
     };
 
     setEvents(updatedEvents);
-
     setEventTitle("");
     setEventTime("");
   };
 
   return (
-    <div style={{ padding: "20px", border: "1px solid gray" }}>
-      <h2>Calender</h2>
+    <div className="calender-overlay">
+      <div className="calender-panel">
+        <button onClick={onClose}>Close</button>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(7, 1fr)",
-          gap: "10px",
-        }}
-      >
-        {daysArray.map((day) => {
-          const formattedDate = `${currentYear}-${String(
-            currentMonth + 1
-          ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        <h2>Calender</h2>
 
-          return (
-            <div
-              key={day}
-              onClick={() => handleDateClick(day)}
-              style={{
-                padding: "10px",
-                border: "1px solid black",
-                cursor: "pointer",
-                background:
-                  selectedDate === formattedDate
-                    ? "#ddd"
-                    : "white",
-              }}
-            >
-              {day}
+        <div className="calender-grid">
+          {daysArray.map((day) => {
+            const formattedDate = `${currentYear}-${String(
+              currentMonth + 1
+            ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-              {events[formattedDate] && (
-                <div style={{ fontSize: "10px" }}>•</div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {selectedDate && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Events for {selectedDate}</h3>
-
-          {events[selectedDate]?.length > 0 ? (
-            events[selectedDate].map((event) => (
-              <div key={event.id}>
-                {event.time} - {event.title}
+            return (
+              <div
+                key={day}
+                className="calender-day"
+                onClick={() => handleDateClick(day)}
+              >
+                {day}
+                {events[formattedDate] && <span>•</span>}
               </div>
-            ))
-          ) : (
-            <p>No events scheduled.</p>
-          )}
+            );
+          })}
+        </div>
 
-          <div style={{ marginTop: "10px" }}>
+        {selectedDate && (
+          <div className="calender-events">
+            <h3>Events for {selectedDate}</h3>
+
+            {events[selectedDate]?.length > 0 ? (
+              events[selectedDate].map((event) => (
+                <div key={event.id}>
+                  {event.time} - {event.title}
+                </div>
+              ))
+            ) : (
+              <p>No events scheduled.</p>
+            )}
+
             <input
               type="text"
               placeholder="Event Title"
@@ -120,8 +109,8 @@ function CalenderPanel({
               Add Event
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

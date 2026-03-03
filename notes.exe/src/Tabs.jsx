@@ -1,3 +1,4 @@
+// src/Tabs.jsx
 function Tabs({ activeTab, setActiveTab }) {
   return (
     <div>

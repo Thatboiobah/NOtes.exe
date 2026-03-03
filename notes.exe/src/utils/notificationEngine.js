@@ -1,3 +1,4 @@
+// src/utils/notificationEngine.js
 export function generateNotifications(classes) {
   const now = new Date();
 

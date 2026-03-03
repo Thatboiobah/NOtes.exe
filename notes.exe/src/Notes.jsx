@@ -1,3 +1,4 @@
+// src/Notes.jsx
 function Notes({
   selectedClass,
   setIsModalOpen,

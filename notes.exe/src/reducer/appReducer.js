@@ -1,3 +1,4 @@
+// src/reducer/appReducer.js
 export const initialState = {
   classes: []
 };

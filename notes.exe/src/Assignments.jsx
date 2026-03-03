@@ -1,3 +1,4 @@
+// src/Assignments.jsx
 function Assignments({
   selectedClass,
   setIsModalOpen,

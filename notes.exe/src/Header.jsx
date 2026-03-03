@@ -1,3 +1,4 @@
+// src/Header.jsx
 function Header({ theme, toggleTheme, onBellClick, toggleCalender }) {
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-GB");

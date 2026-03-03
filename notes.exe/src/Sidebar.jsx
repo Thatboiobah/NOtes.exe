@@ -1,3 +1,4 @@
+// src/Sidebar.jsx
 function Sidebar({
   classes,
   selectedClassId,
