@@ -7,7 +7,9 @@ function Header({ theme, toggleTheme, toggleNotifications, toggleCalendar }) {
       <h1>notes.exe</h1>
       <div>
         <span>{formattedDate}</span>
-        <button onClick={toggleNotifications}>Bell</button>
+      <button onClick={onBellClick}>
+        🔔 Notifications
+      </button>
         <button onClick={toggleCalendar}>Calendar</button>
         <button onClick={toggleTheme}>Toggle Theme</button>  
       </div>
