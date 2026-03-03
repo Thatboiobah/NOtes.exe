@@ -9,7 +9,7 @@ import { appReducer, initialState } from "./reducer/appReducer";
 
 function App() {
   // =========================
-  // REDUCER STATE (MAIN DATA)
+  // REDUCER STATE
   // =========================
   const [state, dispatch] = useReducer(
     appReducer,
@@ -35,7 +35,6 @@ function App() {
   const [calenderEvents, setCalenderEvents] = useState({});
   const [isCalenderView, setIsCalenderView] = useState(false);
 
-  // Load calender events
   useEffect(() => {
     const saved = localStorage.getItem("calenderEvents");
     if (saved) {
@@ -43,7 +42,6 @@ function App() {
     }
   }, []);
 
-  // Save calender events
   useEffect(() => {
     localStorage.setItem(
       "calenderEvents",
@@ -62,16 +60,10 @@ function App() {
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
-  // =========================
-  // DERIVED DATA
-  // =========================
   const selectedClass = state.classes.find(
     (cls) => cls.id === selectedClassId
   );
 
-  // =========================
-  // NOTIFICATION CONTROLS
-  // =========================
   const toggleNotifications = () => {
     setIsNotificationOpen((prev) => !prev);
   };
@@ -80,9 +72,6 @@ function App() {
     setIsNotificationOpen(false);
   };
 
-  // =========================
-  // RENDER
-  // =========================
   return (
     <>
       <Header
@@ -106,29 +95,32 @@ function App() {
         }}
       />
 
-      {isCalenderView ? (
-        <CalenderPanel
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          events={calenderEvents}
-          setEvents={setCalenderEvents}
-        />
-      ) : (
-        <MainContent
-          selectedClass={selectedClass}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          dispatch={dispatch}
-          setIsModalOpen={setIsModalOpen}
-          setModalType={setModalType}
-          setEditingItem={setEditingItem}
-        />
-      )}
+      {/* Always render MainContent */}
+      <MainContent
+        selectedClass={selectedClass}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        dispatch={dispatch}
+        setIsModalOpen={setIsModalOpen}
+        setModalType={setModalType}
+        setEditingItem={setEditingItem}
+      />
 
+      {/* Notification Overlay */}
       <NotificationPanel
         isOpen={isNotificationOpen}
         onClose={closeNotifications}
         classes={state.classes}
+      />
+
+      {/* Calender Overlay */}
+      <CalenderPanel
+        isOpen={isCalenderView}
+        onClose={() => setIsCalenderView(false)}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        events={calenderEvents}
+        setEvents={setCalenderEvents}
       />
 
       {isModalOpen && (

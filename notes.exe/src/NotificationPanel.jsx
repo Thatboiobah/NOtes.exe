@@ -1,115 +1,117 @@
-import { useEffect } from "react";
-import { generateNotifications } from "./utils/notificationEngine";
+import { useState } from "react";
+import "./calender.css";
 
-function NotificationPanel({ isOpen, onClose, classes }) {
+function CalenderPanel({
+  isOpen,
+  onClose,
+  selectedDate,
+  setSelectedDate,
+  events,
+  setEvents,
+}) {
+  if (!isOpen) return null;
 
-  const notifications = generateNotifications(classes);
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth();
+  const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const daysArray = Array.from({ length: lastDay }, (_, i) => i + 1);
 
-  // Close on ESC key
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
+  const [eventTitle, setEventTitle] = useState("");
+  const [eventTime, setEventTime] = useState("");
+
+  const handleDateClick = (day) => {
+    const formattedDate = `${currentYear}-${String(
+      currentMonth + 1
+    ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+    setSelectedDate(formattedDate);
+  };
+
+  const addEvent = () => {
+    if (!selectedDate || !eventTitle) return;
+
+    const newEvent = {
+      id: Date.now(),
+      title: eventTitle,
+      time: eventTime,
     };
 
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+    const updatedEvents = {
+      ...events,
+      [selectedDate]: [...(events[selectedDate] || []), newEvent],
     };
-  }, [isOpen, onClose]);
+
+    setEvents(updatedEvents);
+    setEventTitle("");
+    setEventTime("");
+  };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        display: isOpen ? "flex" : "none",
-        justifyContent: "flex-end",
-        zIndex: 1000
-      }}
-    >
-      {/* Overlay */}
-      <div
-        onClick={onClose}
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "rgba(0,0,0,0.3)"
-        }}
-      />
+    <div className="calender-overlay">
+      <div className="calender-panel">
+        <button onClick={onClose}>Close</button>
 
-      {/* Slide Panel */}
-      <div
-        style={{
-          position: "relative",
-          width: "350px",
-          height: "100%",
-          background: "white",
-          padding: "1rem",
-          overflowY: "auto",
-          transform: isOpen ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.3s ease"
-        }}
-      >
-        <h2>Notifications</h2>
+        <h2>Calender</h2>
 
-        {/* Overdue Assignments */}
-        <Section
-          title="Overdue Assignments"
-          items={notifications.overdueAssignments}
-          renderItem={(item) => (
-            <div key={item.id}>
-              {item.title} — {item.className}
-            </div>
-          )}
-        />
+        <div className="calender-grid">
+          {daysArray.map((day) => {
+            const formattedDate = `${currentYear}-${String(
+              currentMonth + 1
+            ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-        {/* Upcoming Assignments */}
-        <Section
-          title="Upcoming Assignments (3 days)"
-          items={notifications.upcomingAssignments}
-          renderItem={(item) => (
-            <div key={item.id}>
-              {item.title} — {item.className}
-            </div>
-          )}
-        />
+            return (
+              <div
+                key={day}
+                className="calender-day"
+                onClick={() => handleDateClick(day)}
+              >
+                {day}
+                {events[formattedDate] && <span>•</span>}
+              </div>
+            );
+          })}
+        </div>
 
-        {/* Upcoming Exams */}
-        <Section
-          title="Upcoming Exams (7 days)"
-          items={notifications.upcomingExams}
-          renderItem={(item) => (
-            <div key={item.id}>
-              {item.title} — {item.className}
-            </div>
-          )}
-        />
+        {selectedDate && (
+          <div className="calender-events">
+            <h3>Events for {selectedDate}</h3>
 
-        {notifications.overdueAssignments.length === 0 &&
-         notifications.upcomingAssignments.length === 0 &&
-         notifications.upcomingExams.length === 0 && (
-           <p>No notifications 🎉</p>
-         )}
+            {events[selectedDate]?.length > 0 ? (
+              events[selectedDate].map((event) => (
+                <div key={event.id}>
+                  {event.time} - {event.title}
+                </div>
+              ))
+            ) : (
+              <p>No events scheduled.</p>
+            )}
+
+            <input
+              type="text"
+              placeholder="Event Title"
+              value={eventTitle}
+              onChange={(e) =>
+                setEventTitle(e.target.value)
+              }
+            />
+
+            <input
+              type="time"
+              value={eventTime}
+              onChange={(e) =>
+                setEventTime(e.target.value)
+              }
+            />
+
+            <button onClick={addEvent}>
+              Add Event
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
-
-    function Section({ title, items, renderItem }) {
-  if (!items || items.length === 0) return null;
-
-  return (
-    <div style={{ marginBottom: "1.5rem" }}>
-      <h3>{title}</h3>
-      {items.map(renderItem)}
-    </div>
-  );
 }
 
-}
-
-export default NotificationPanel;
+export default CalenderPanel;
