@@ -1,4 +1,4 @@
-function Header({ theme, toggleTheme, onBellClick, toggleCalendar }) {
+function Header({ theme, toggleTheme, onBellClick, toggleCalender }) {
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-GB");
 
@@ -12,8 +12,13 @@ function Header({ theme, toggleTheme, onBellClick, toggleCalendar }) {
           🔔 Notifications
         </button>
 
-        <button onClick={toggleCalendar}>Calendar</button>
-        <button onClick={toggleTheme}>Toggle Theme</button>
+        <button onClick={toggleCalender}>
+          Calender
+        </button>
+
+        <button onClick={toggleTheme}>
+          Toggle Theme
+        </button>
       </div>
     </header>
   );

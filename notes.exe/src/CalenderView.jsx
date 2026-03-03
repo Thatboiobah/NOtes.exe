@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function CalendarPanel({
+function CalenderPanel({
   selectedDate,
   setSelectedDate,
   events,
@@ -11,7 +11,6 @@ function CalendarPanel({
   const currentMonth = today.getMonth();
 
   const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
-
   const daysArray = Array.from({ length: lastDay }, (_, i) => i + 1);
 
   const [eventTitle, setEventTitle] = useState("");
@@ -47,9 +46,8 @@ function CalendarPanel({
 
   return (
     <div style={{ padding: "20px", border: "1px solid gray" }}>
-      <h2>Calendar</h2>
+      <h2>Calender</h2>
 
-      {/* Calendar Grid */}
       <div
         style={{
           display: "grid",
@@ -57,40 +55,40 @@ function CalendarPanel({
           gap: "10px",
         }}
       >
-        {daysArray.map((day) => (
-          <div
-            key={day}
-            onClick={() => handleDateClick(day)}
-            style={{
-              padding: "10px",
-              border: "1px solid black",
-              cursor: "pointer",
-              background:
-                selectedDate &&
-                selectedDate.endsWith(`-${String(day).padStart(2, "0")}`)
-                  ? "#ddd"
-                  : "white",
-            }}
-          >
-            {day}
+        {daysArray.map((day) => {
+          const formattedDate = `${currentYear}-${String(
+            currentMonth + 1
+          ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-            {/* Dot if event exists */}
-            {events[
-              `${currentYear}-${String(currentMonth + 1).padStart(
-                2,
-                "0"
-              )}-${String(day).padStart(2, "0")}`
-            ] && <div style={{ fontSize: "10px" }}>•</div>}
-          </div>
-        ))}
+          return (
+            <div
+              key={day}
+              onClick={() => handleDateClick(day)}
+              style={{
+                padding: "10px",
+                border: "1px solid black",
+                cursor: "pointer",
+                background:
+                  selectedDate === formattedDate
+                    ? "#ddd"
+                    : "white",
+              }}
+            >
+              {day}
+
+              {events[formattedDate] && (
+                <div style={{ fontSize: "10px" }}>•</div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Selected Date Section */}
       {selectedDate && (
         <div style={{ marginTop: "20px" }}>
           <h3>Events for {selectedDate}</h3>
 
-          {events[selectedDate] && events[selectedDate].length > 0 ? (
+          {events[selectedDate]?.length > 0 ? (
             events[selectedDate].map((event) => (
               <div key={event.id}>
                 {event.time} - {event.title}
@@ -100,22 +98,27 @@ function CalendarPanel({
             <p>No events scheduled.</p>
           )}
 
-          {/* Add Event Form */}
           <div style={{ marginTop: "10px" }}>
             <input
               type="text"
               placeholder="Event Title"
               value={eventTitle}
-              onChange={(e) => setEventTitle(e.target.value)}
+              onChange={(e) =>
+                setEventTitle(e.target.value)
+              }
             />
 
             <input
               type="time"
               value={eventTime}
-              onChange={(e) => setEventTime(e.target.value)}
+              onChange={(e) =>
+                setEventTime(e.target.value)
+              }
             />
 
-            <button onClick={addEvent}>Add Event</button>
+            <button onClick={addEvent}>
+              Add Event
+            </button>
           </div>
         </div>
       )}
@@ -123,4 +126,4 @@ function CalendarPanel({
   );
 }
 
-export default CalendarPanel;
+export default CalenderPanel;
