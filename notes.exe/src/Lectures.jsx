@@ -1,50 +1,29 @@
-// src/Lectures.jsx
-function Lectures({
-  selectedClass,
-  setIsModalOpen,
-  setModalType,
-  setEditingItem,
-  setAppData
-}) {
+function Lectures({ selectedClass, setIsModalOpen, setModalType, setEditingItem, dispatch }) {
+
   const deleteLecture = (id) => {
-    setAppData((prev) => ({
-      ...prev,
-      classes: prev.classes.map((cls) =>
-        cls.id === selectedClass.id
-          ? {
-              ...cls,
-              lectures: cls.lectures.filter((lec) => lec.id !== id)
-            }
-          : cls
-      )
-    }));
+    dispatch({
+      type: "UPDATE_CLASS",
+      payload: {
+        id: selectedClass.id,
+        data: {
+          lectures: selectedClass.lectures.filter(l => l.id !== id)
+        }
+      }
+    });
   };
 
   return (
     <div>
-      <button
-        onClick={() => {
-          setModalType("addLecture");
-          setIsModalOpen(true);
-        }}
-      >
+      <button onClick={() => { setEditingItem(null); setModalType("addLecture"); setIsModalOpen(true); }}>
         + Add Lecture
       </button>
 
-      {selectedClass.lectures.map((lec) => (
-        <div key={lec.id}>
-          <h4>{lec.topic}</h4>
-          <p>{lec.datetime}</p>
-          <button
-            onClick={() => {
-              setEditingItem(lec);
-              setModalType("editLecture");
-              setIsModalOpen(true);
-            }}
-          >
-            Edit
-          </button>
-          <button onClick={() => deleteLecture(lec.id)}>Delete</button>
+      {selectedClass.lectures.map(l => (
+        <div key={l.id}>
+          <h4>{l.topic}</h4>
+          <p>{l.datetime}</p>
+          <button onClick={() => { setEditingItem(l); setModalType("editLecture"); setIsModalOpen(true); }}>Edit</button>
+          <button onClick={() => deleteLecture(l.id)}>Delete</button>
         </div>
       ))}
     </div>

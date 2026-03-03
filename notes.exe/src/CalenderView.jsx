@@ -1,15 +1,7 @@
-// src/CalenderView.jsx
 import { useState } from "react";
 import "./calender.css";
 
-function CalenderPanel({
-  isOpen,
-  onClose,
-  selectedDate,
-  setSelectedDate,
-  events,
-  setEvents,
-}) {
+function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, dispatch }) {
   if (!isOpen) return null;
 
   const today = new Date();
@@ -21,11 +13,10 @@ function CalenderPanel({
   const [eventTitle, setEventTitle] = useState("");
   const [eventTime, setEventTime] = useState("");
 
-  const handleDateClick = (day) => {
-    const formattedDate = `${currentYear}-${String(
-      currentMonth + 1
-    ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const events = state.calenderEvents || {};
 
+  const handleDateClick = (day) => {
+    const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     setSelectedDate(formattedDate);
   };
 
@@ -38,12 +29,11 @@ function CalenderPanel({
       time: eventTime,
     };
 
-    const updatedEvents = {
-      ...events,
-      [selectedDate]: [...(events[selectedDate] || []), newEvent],
-    };
+    dispatch({
+      type: "ADD_CALENDAR_EVENT",
+      payload: { date: selectedDate, event: newEvent },
+    });
 
-    setEvents(updatedEvents);
     setEventTitle("");
     setEventTime("");
   };
@@ -53,14 +43,11 @@ function CalenderPanel({
       <div className="calender-panel">
         <button onClick={onClose}>Close</button>
 
-        <h2>Calender</h2>
+        <h2>Calendar</h2>
 
         <div className="calender-grid">
           {daysArray.map((day) => {
-            const formattedDate = `${currentYear}-${String(
-              currentMonth + 1
-            ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
+            const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
             return (
               <div
                 key={day}
@@ -77,7 +64,6 @@ function CalenderPanel({
         {selectedDate && (
           <div className="calender-events">
             <h3>Events for {selectedDate}</h3>
-
             {events[selectedDate]?.length > 0 ? (
               events[selectedDate].map((event) => (
                 <div key={event.id}>
@@ -92,22 +78,15 @@ function CalenderPanel({
               type="text"
               placeholder="Event Title"
               value={eventTitle}
-              onChange={(e) =>
-                setEventTitle(e.target.value)
-              }
+              onChange={(e) => setEventTitle(e.target.value)}
             />
-
             <input
               type="time"
               value={eventTime}
-              onChange={(e) =>
-                setEventTime(e.target.value)
-              }
+              onChange={(e) => setEventTime(e.target.value)}
             />
 
-            <button onClick={addEvent}>
-              Add Event
-            </button>
+            <button onClick={addEvent}>Add Event</button>
           </div>
         )}
       </div>
@@ -115,4 +94,4 @@ function CalenderPanel({
   );
 }
 
-export default CalenderPanel;
+export default CalendarPanel;

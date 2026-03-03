@@ -1,4 +1,3 @@
-// src/MainContent.jsx
 import Tabs from "./Tabs";
 import Lectures from "./Lectures";
 import Notes from "./Notes";
@@ -12,7 +11,7 @@ function MainContent({
   setIsModalOpen,
   setModalType,
   setEditingItem,
-  setAppData
+  dispatch
 }) {
   if (!selectedClass) {
     return <p>Select a class to get started</p>;
@@ -30,7 +29,7 @@ function MainContent({
           setIsModalOpen={setIsModalOpen}
           setModalType={setModalType}
           setEditingItem={setEditingItem}
-          setAppData={setAppData}
+          dispatch={dispatch}
         />
       )}
 
@@ -40,14 +39,17 @@ function MainContent({
           setIsModalOpen={setIsModalOpen}
           setModalType={setModalType}
           setEditingItem={setEditingItem}
-          setAppData={setAppData}
+          dispatch={dispatch}
         />
       )}
 
       {activeTab === "assignments" && (
         <Assignments
           selectedClass={selectedClass}
-          setAppData={setAppData}
+          setIsModalOpen={setIsModalOpen}
+          setModalType={setModalType}
+          setEditingItem={setEditingItem}
+          dispatch={dispatch}
         />
       )}
 
@@ -57,7 +59,7 @@ function MainContent({
           setIsModalOpen={setIsModalOpen}
           setModalType={setModalType}
           setEditingItem={setEditingItem}
-          setAppData={setAppData}
+          dispatch={dispatch}
         />
       )}
     </main>

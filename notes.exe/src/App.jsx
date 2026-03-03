@@ -1,17 +1,13 @@
-// src/App.jsx
 import { useReducer, useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
 import Modal from "./Modal";
 import NotificationPanel from "./NotificationPanel";
-import CalenderPanel from "./CalenderView";
+import CalendarPanel from "./CalenderView";
 import { appReducer, initialState } from "./reducer/appReducer";
 
 function App() {
-  // =========================
-  // REDUCER STATE
-  // =========================
   const [state, dispatch] = useReducer(
     appReducer,
     initialState,
@@ -29,30 +25,7 @@ function App() {
     localStorage.setItem("studyPlannerData", JSON.stringify(state));
   }, [state]);
 
-  // =========================
-  // CALENDER STATE
-  // =========================
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [calenderEvents, setCalenderEvents] = useState({});
-  const [isCalenderView, setIsCalenderView] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("calenderEvents");
-    if (saved) {
-      setCalenderEvents(JSON.parse(saved));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(
-      "calenderEvents",
-      JSON.stringify(calenderEvents)
-    );
-  }, [calenderEvents]);
-
-  // =========================
   // UI STATES
-  // =========================
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeTab, setActiveTab] = useState("lectures");
   const [theme, setTheme] = useState("light");
@@ -60,30 +33,25 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [isCalendarView, setIsCalendarView] = useState(false);
 
   const selectedClass = state.classes.find(
     (cls) => cls.id === selectedClassId
   );
 
-  const toggleNotifications = () => {
-    setIsNotificationOpen((prev) => !prev);
-  };
-
-  const closeNotifications = () => {
-    setIsNotificationOpen(false);
-  };
+  const toggleNotifications = () => setIsNotificationOpen(prev => !prev);
+  const closeNotifications = () => setIsNotificationOpen(false);
+  const toggleCalendar = () => setIsCalendarView(prev => !prev);
+  const addClass = (name) => dispatch({ type: "ADD_CLASS", payload: name });
 
   return (
     <>
       <Header
         theme={theme}
-        toggleTheme={() =>
-          setTheme(theme === "light" ? "dark" : "light")
-        }
+        toggleTheme={() => setTheme(theme === "light" ? "dark" : "light")}
         onBellClick={toggleNotifications}
-        toggleCalender={() =>
-          setIsCalenderView((prev) => !prev)
-        }
+        toggleCalendar={toggleCalendar} // fixed prop name
       />
 
       <Sidebar
@@ -96,7 +64,6 @@ function App() {
         }}
       />
 
-      {/* Always render MainContent */}
       <MainContent
         selectedClass={selectedClass}
         activeTab={activeTab}
@@ -107,21 +74,19 @@ function App() {
         setEditingItem={setEditingItem}
       />
 
-      {/* Notification Overlay */}
       <NotificationPanel
         isOpen={isNotificationOpen}
         onClose={closeNotifications}
         classes={state.classes}
       />
 
-      {/* Calender Overlay */}
-      <CalenderPanel
-        isOpen={isCalenderView}
-        onClose={() => setIsCalenderView(false)}
+      <CalendarPanel
+        isOpen={isCalendarView}
+        onClose={() => setIsCalendarView(false)}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
-        events={calenderEvents}
-        setEvents={setCalenderEvents}
+        state={state}
+        dispatch={dispatch} // centralized state
       />
 
       {isModalOpen && (
@@ -131,6 +96,7 @@ function App() {
           closeModal={() => setIsModalOpen(false)}
           selectedClass={selectedClass}
           dispatch={dispatch}
+          addClass={addClass}
         />
       )}
     </>

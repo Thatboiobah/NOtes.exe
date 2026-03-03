@@ -1,5 +1,4 @@
-// src/Header.jsx
-function Header({ theme, toggleTheme, onBellClick, toggleCalender }) {
+function Header({ theme, toggleTheme, onBellClick, toggleCalendar }) {
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-GB");
 
@@ -9,17 +8,11 @@ function Header({ theme, toggleTheme, onBellClick, toggleCalender }) {
       <div>
         <span>{formattedDate}</span>
 
-        <button onClick={onBellClick}>
-          🔔 Notifications
-        </button>
+        <button onClick={onBellClick}>🔔 Notifications</button>
 
-        <button onClick={toggleCalender}>
-          Calender
-        </button>
+        <button onClick={toggleCalendar}>Calendar</button> {/* fixed name */}
 
-        <button onClick={toggleTheme}>
-          Toggle Theme
-        </button>
+        <button onClick={toggleTheme}>Toggle Theme</button>
       </div>
     </header>
   );
