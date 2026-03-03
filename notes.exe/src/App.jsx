@@ -4,6 +4,7 @@ import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
 import Modal from "./Modal";
 import NotificationPanel from "./NotificationPanel";
+//import CalendarView from "./CalendarView"; 
 import { appReducer, initialState } from "./reducer/appReducer";
 
 function App() {
@@ -27,6 +28,28 @@ function App() {
   useEffect(() => {
     localStorage.setItem("studyPlannerData", JSON.stringify(state));
   }, [state]);
+
+  // =========================
+  // CALENDAR STATE
+  // =========================
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [calendarEvents, setCalendarEvents] = useState({});
+
+  // Load calendar events
+  useEffect(() => {
+    const saved = localStorage.getItem("calendarEvents");
+    if (saved) {
+      setCalendarEvents(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save calendar events
+  useEffect(() => {
+    localStorage.setItem(
+      "calendarEvents",
+      JSON.stringify(calendarEvents)
+    );
+  }, [calendarEvents]);
 
   // =========================
   // UI STATES
@@ -85,7 +108,12 @@ function App() {
       />
 
       {isCalendarView ? (
-        <CalendarView state={state} />
+        <CalendarView
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          calendarEvents={calendarEvents}
+          setCalendarEvents={setCalendarEvents}
+        />
       ) : (
         <MainContent
           selectedClass={selectedClass}
