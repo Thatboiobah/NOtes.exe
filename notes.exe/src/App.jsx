@@ -1,28 +1,36 @@
-import { useState, useEffect } from "react";
+import { useReducer, useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import MainContent from "./MainContent";
 import Modal from "./Modal";
-import { generateNotifications } from "./utils/notificationEngine";
+import NotificationPanel from "./NotificationPanel";
+import { appReducer, initialState } from "./reducer/appReducer";
 
 function App() {
-    
-  const [appData, setAppData] = useState(() => {
-  try {
-    const storedData = localStorage.getItem("studyPlannerData");
-    return storedData ? JSON.parse(storedData) : { classes: [] };
-  } catch (error) {
-    console.error("Storage corrupted. Resetting...");
-    return { classes: [] };
-  }
-});
 
-
+  // =========================
+  // REDUCER STATE (MAIN DATA)
+  // =========================
+  const [state, dispatch] = useReducer(
+    appReducer,
+    initialState,
+    (initial) => {
+      try {
+        const stored = localStorage.getItem("studyPlannerData");
+        return stored ? JSON.parse(stored) : initial;
+      } catch {
+        return initial;
+      }
+    }
+  );
 
   useEffect(() => {
-  localStorage.setItem("studyPlannerData", JSON.stringify(appData));
-}, [appData]); 
+    localStorage.setItem("studyPlannerData", JSON.stringify(state));
+  }, [state]);
 
+  // =========================
+  // UI STATES
+  // =========================
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeTab, setActiveTab] = useState("lectures");
   const [theme, setTheme] = useState("light");
@@ -32,42 +40,42 @@ function App() {
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
- // const notifications = generateNotifications(state.classes);
-  const selectedClass = appData.classes.find(
+  // =========================
+  // DERIVED DATA
+  // =========================
+  const selectedClass = state.classes.find(
     (cls) => cls.id === selectedClassId
   );
 
-  
-
-  const addClass = (name) => {
-    const newClass = {
-      id: Date.now(),
-      name,
-      lectures: [],
-      notes: [],
-      assignments: [],
-      exams: []
-    };
-
-    setAppData((prev) => ({
-      ...prev,
-      classes: [...prev.classes, newClass]
-    }));
+  // =========================
+  // NOTIFICATION CONTROLS
+  // =========================
+  const toggleNotifications = () => {
+    setIsNotificationOpen((prev) => !prev);
   };
 
+  const closeNotifications = () => {
+    setIsNotificationOpen(false);
+  };
+
+  // =========================
+  // RENDER
+  // =========================
   return (
     <>
       <Header
         theme={theme}
-        toggleTheme={() => setTheme(theme === "light" ? "dark" : "light")}
-        toggleNotifications={() =>
-          setIsNotificationOpen(!isNotificationOpen)
+        toggleTheme={() =>
+          setTheme(theme === "light" ? "dark" : "light")
         }
-        toggleCalendar={() => setIsCalendarView(!isCalendarView)}
+        onBellClick={toggleNotifications}
+        toggleCalendar={() =>
+          setIsCalendarView((prev) => !prev)
+        }
       />
 
       <Sidebar
-        classes={appData.classes}
+        classes={state.classes}
         selectedClassId={selectedClassId}
         setSelectedClassId={setSelectedClassId}
         openAddClassModal={() => {
@@ -77,31 +85,32 @@ function App() {
       />
 
       {isCalendarView ? (
-        <CalendarView appData={appData} />
+        <CalendarView state={state} />
       ) : (
         <MainContent
           selectedClass={selectedClass}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
+          dispatch={dispatch}
           setIsModalOpen={setIsModalOpen}
           setModalType={setModalType}
           setEditingItem={setEditingItem}
-          setAppData={setAppData}
         />
       )}
 
-      {isNotificationOpen && (
-        <NotificationPanel appData={appData} />
-      )}
+      <NotificationPanel
+        isOpen={isNotificationOpen}
+        onClose={closeNotifications}
+        classes={state.classes}
+      />
 
       {isModalOpen && (
         <Modal
           modalType={modalType}
           editingItem={editingItem}
           closeModal={() => setIsModalOpen(false)}
-          addClass={addClass}
           selectedClass={selectedClass}
-          setAppData={setAppData}
+          dispatch={dispatch}
         />
       )}
     </>
