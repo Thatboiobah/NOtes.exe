@@ -1,215 +1,96 @@
 // src/reducer/appReducer.js
 export const initialState = {
   classes: [],
-  calendarEvents: {}
+  notifications: [], // NEW
 };
 
 export function appReducer(state, action) {
   switch (action.type) {
-    // ================= CLASS =================
     case "ADD_CLASS":
       return {
         ...state,
-        classes: [
-          ...state.classes,
-          { id: Date.now(), name: action.payload, lectures: [], notes: [], assignments: [], exams: [] }
-        ]
-      };
-
-    case "EDIT_CLASS":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.id ? { ...cls, name: action.payload.name } : cls
-        )
+        classes: [...state.classes, { id: Date.now(), title: action.payload, lectures: [], notes: [], assignments: [], exams: [] }],
       };
 
     case "DELETE_CLASS":
       return {
         ...state,
-        classes: state.classes.filter(cls => cls.id !== action.payload)
+        classes: state.classes.filter((cls) => cls.id !== action.payload),
       };
 
-    // ================= LECTURES =================
-    case "ADD_LECTURE":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? { ...cls, lectures: [...cls.lectures, { id: Date.now(), ...action.payload.data }] }
-            : cls
-        )
-      };
-
-    case "EDIT_LECTURE":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? {
-                ...cls,
-                lectures: cls.lectures.map(lec =>
-                  lec.id === action.payload.id ? { ...lec, ...action.payload.data } : lec
-                )
-              }
-            : cls
-        )
-      };
-
-    case "DELETE_LECTURE":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? { ...cls, lectures: cls.lectures.filter(lec => lec.id !== action.payload.id) }
-            : cls
-        )
-      };
-
-    // ================= NOTES =================
-    case "ADD_NOTE":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? { ...cls, notes: [...cls.notes, { id: Date.now(), createdAt: new Date().toISOString(), ...action.payload.data }] }
-            : cls
-        )
-      };
-
-    case "EDIT_NOTE":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? {
-                ...cls,
-                notes: cls.notes.map(note =>
-                  note.id === action.payload.id ? { ...note, ...action.payload.data } : note
-                )
-              }
-            : cls
-        )
-      };
-
-    case "DELETE_NOTE":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? { ...cls, notes: cls.notes.filter(note => note.id !== action.payload.id) }
-            : cls
-        )
-      };
-
-    // ================= ASSIGNMENTS =================
     case "ADD_ASSIGNMENT":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? { ...cls, assignments: [...cls.assignments, { id: Date.now(), status: "pending", ...action.payload.data }] }
-            : cls
-        )
+    case "EDIT_ASSIGNMENT": {
+      const { classId, data } = action.payload;
+      const updatedClasses = state.classes.map((cls) => {
+        if (cls.id !== classId) return cls;
+        const assignments = action.type === "ADD_ASSIGNMENT" ? [...cls.assignments, data] : cls.assignments.map((a) => (a.id === data.id ? data : a));
+        return { ...cls, assignments };
+      });
+
+      // Create a notification for due date
+      const dueNotification = {
+        id: Date.now(),
+        type: "assignment",
+        message: `Assignment "${data.title}" is due on ${data.dueDate}`,
+        date: data.dueDate,
       };
 
-    case "EDIT_ASSIGNMENT":
       return {
         ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? {
-                ...cls,
-                assignments: cls.assignments.map(a =>
-                  a.id === action.payload.id ? { ...a, ...action.payload.data } : a
-                )
-              }
-            : cls
-        )
+        classes: updatedClasses,
+        notifications: [...state.notifications.filter((n) => n.type !== "assignment" || n.id !== data.id), dueNotification],
       };
+    }
 
-    case "DELETE_ASSIGNMENT":
+    case "DELETE_ASSIGNMENT": {
+      const { classId, id } = action.payload;
+      const updatedClasses = state.classes.map((cls) => {
+        if (cls.id !== classId) return cls;
+        return { ...cls, assignments: cls.assignments.filter((a) => a.id !== id) };
+      });
       return {
         ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? { ...cls, assignments: cls.assignments.filter(a => a.id !== action.payload.id) }
-            : cls
-        )
+        classes: updatedClasses,
+        notifications: state.notifications.filter((n) => n.type !== "assignment" || n.id !== id),
       };
+    }
 
-    case "TOGGLE_ASSIGNMENT_STATUS":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? {
-                ...cls,
-                assignments: cls.assignments.map(a =>
-                  a.id === action.payload.id ? { ...a, status: a.status === "pending" ? "completed" : "pending" } : a
-                )
-              }
-            : cls
-        )
-      };
-
-    // ================= EXAMS =================
     case "ADD_EXAM":
-      return {
-        ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? { ...cls, exams: [...cls.exams, { id: Date.now(), ...action.payload.data }] }
-            : cls
-        )
+    case "EDIT_EXAM": {
+      const { classId, data } = action.payload;
+      const updatedClasses = state.classes.map((cls) => {
+        if (cls.id !== classId) return cls;
+        const exams = action.type === "ADD_EXAM" ? [...cls.exams, data] : cls.exams.map((e) => (e.id === data.id ? data : e));
+        return { ...cls, exams };
+      });
+
+      // Create a notification for exam
+      const examNotification = {
+        id: Date.now(),
+        type: "exam",
+        message: `Exam "${data.title}" is scheduled for ${data.date} at ${data.time}`,
+        date: data.date,
       };
 
-    case "EDIT_EXAM":
       return {
         ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? {
-                ...cls,
-                exams: cls.exams.map(exam =>
-                  exam.id === action.payload.id ? { ...exam, ...action.payload.data } : exam
-                )
-              }
-            : cls
-        )
+        classes: updatedClasses,
+        notifications: [...state.notifications.filter((n) => n.type !== "exam" || n.id !== data.id), examNotification],
       };
+    }
 
-    case "DELETE_EXAM":
+    case "DELETE_EXAM": {
+      const { classId, id } = action.payload;
+      const updatedClasses = state.classes.map((cls) => {
+        if (cls.id !== classId) return cls;
+        return { ...cls, exams: cls.exams.filter((e) => e.id !== id) };
+      });
       return {
         ...state,
-        classes: state.classes.map(cls =>
-          cls.id === action.payload.classId
-            ? { ...cls, exams: cls.exams.filter(exam => exam.id !== action.payload.id) }
-            : cls
-        )
+        classes: updatedClasses,
+        notifications: state.notifications.filter((n) => n.type !== "exam" || n.id !== id),
       };
-
-    // ================= CALENDAR EVENTS =================
-    case "ADD_CALENDAR_EVENT":
-      const { date, event } = action.payload;
-      return {
-        ...state,
-        calendarEvents: {
-          ...state.calendarEvents,
-          [date]: [...(state.calendarEvents[date] || []), event]
-        }
-      };
-
-    case "DELETE_CALENDAR_EVENT":
-      return {
-        ...state,
-        calendarEvents: {
-          ...state.calendarEvents,
-          [action.payload.date]: (state.calendarEvents[action.payload.date] || []).filter(
-            e => e.id !== action.payload.id
-          )
-        }
-      };
+    }
 
     default:
       return state;

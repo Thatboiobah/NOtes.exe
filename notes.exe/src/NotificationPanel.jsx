@@ -1,9 +1,7 @@
-// src/NotificationPanel.jsx
 import { useEffect } from "react";
 import { generateNotifications } from "./utils/notificationEngine";
 
 function NotificationPanel({ isOpen, onClose, classes }) {
-
   const notifications = generateNotifications(classes);
 
   // Close on ESC key
@@ -30,7 +28,7 @@ function NotificationPanel({ isOpen, onClose, classes }) {
         inset: 0,
         display: isOpen ? "flex" : "none",
         justifyContent: "flex-end",
-        zIndex: 1000
+        zIndex: 1000,
       }}
     >
       {/* Overlay */}
@@ -39,7 +37,7 @@ function NotificationPanel({ isOpen, onClose, classes }) {
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(0,0,0,0.3)"
+          background: "rgba(0,0,0,0.3)",
         }}
       />
 
@@ -53,39 +51,36 @@ function NotificationPanel({ isOpen, onClose, classes }) {
           padding: "1rem",
           overflowY: "auto",
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.3s ease"
+          transition: "transform 0.3s ease",
         }}
       >
         <h2>Notifications</h2>
 
-        {/* Overdue Assignments */}
         <Section
           title="Overdue Assignments"
           items={notifications.overdueAssignments}
           renderItem={(item) => (
-            <div key={item.id}>
+            <div key={`overdue-${item.id}`} style={{ marginBottom: "0.5rem" }}>
               {item.title} — {item.className}
             </div>
           )}
         />
 
-        {/* Upcoming Assignments */}
         <Section
           title="Upcoming Assignments (3 days)"
           items={notifications.upcomingAssignments}
           renderItem={(item) => (
-            <div key={item.id}>
+            <div key={`upcoming-${item.id}`} style={{ marginBottom: "0.5rem" }}>
               {item.title} — {item.className}
             </div>
           )}
         />
 
-        {/* Upcoming Exams */}
         <Section
           title="Upcoming Exams (7 days)"
           items={notifications.upcomingExams}
           renderItem={(item) => (
-            <div key={item.id}>
+            <div key={`exam-${item.id}`} style={{ marginBottom: "0.5rem" }}>
               {item.title} — {item.className}
             </div>
           )}
@@ -100,17 +95,19 @@ function NotificationPanel({ isOpen, onClose, classes }) {
     </div>
   );
 
-    function Section({ title, items, renderItem }) {
-  if (!items || items.length === 0) return null;
+  // -----------------------
+  // Section Subcomponent
+  // -----------------------
+  function Section({ title, items, renderItem }) {
+    if (!items || items.length === 0) return null;
 
-  return (
-    <div style={{ marginBottom: "1.5rem" }}>
-      <h3>{title}</h3>
-      {items.map(renderItem)}
-    </div>
-  );
-}
-
+    return (
+      <div style={{ marginBottom: "1.5rem" }}>
+        <h3>{title}</h3>
+        {items.map(renderItem)}
+      </div>
+    );
+  }
 }
 
 export default NotificationPanel;

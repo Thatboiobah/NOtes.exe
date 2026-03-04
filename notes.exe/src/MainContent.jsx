@@ -1,68 +1,86 @@
-import Tabs from "./Tabs";
-import Lectures from "./Lectures";
-import Notes from "./Notes";
-import Assignments from "./Assignments";
-import Exams from "./Exams";
+// src/MainContent.jsx
+import { useState } from "react";
+import Modal from "./Modal";
 
-function MainContent({
-  selectedClass,
-  activeTab,
-  setActiveTab,
-  setIsModalOpen,
-  setModalType,
-  setEditingItem,
-  dispatch
-}) {
-  if (!selectedClass) {
-    return <p>Select a class to get started</p>;
-  }
+function MainContent({ selectedClass, activeTab, setActiveTab, dispatch, setIsModalOpen, setModalType, setEditingItem }) {
+  const [isAdding, setIsAdding] = useState(false);
+
+  if (!selectedClass) return <div className="main-content">Select a class to view content.</div>;
+
+  const tabs = ["lectures", "notes", "assignments", "exams"];
+  const currentItems = selectedClass[activeTab];
+
+  const handleAddClick = () => {
+    setIsAdding(true);
+  };
+
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setModalType(`edit-${activeTab.slice(0, -1)}`); // e.g., edit-lecture
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    dispatch({ type: `DELETE_${activeTab.toUpperCase().slice(0, -1)}`, payload: { classId: selectedClass.id, id } });
+  };
+
+  const renderItemFields = (item) => {
+    switch (activeTab) {
+      case "lectures":
+        return `${item.title} | ${item.time} | ${item.venue}`;
+      case "notes":
+        return `${item.title} | ${item.description}`;
+      case "assignments":
+        return `${item.title} | Due: ${item.dueDate}`;
+      case "exams":
+        return `${item.title} | ${item.date} ${item.time} | ${item.venue}`;
+      default:
+        return item.title;
+    }
+  };
 
   return (
-    <main>
-      <h2>{selectedClass.name}</h2>
+    <div className="main-content">
+      <div className="tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={tab === activeTab ? "active-tab" : ""}
+            onClick={() => {
+              setActiveTab(tab);
+              setIsAdding(false); // Fixes add form persistence bug
+            }}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
 
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      <button onClick={handleAddClick}>Add {activeTab.slice(0, -1)}</button>
 
-      {activeTab === "lectures" && (
-        <Lectures
+      {isAdding && (
+        <Modal
+          modalType={`add-${activeTab.slice(0, -1)}`} // add-lecture, add-note, add-assignment, add-exam
           selectedClass={selectedClass}
-          setIsModalOpen={setIsModalOpen}
-          setModalType={setModalType}
-          setEditingItem={setEditingItem}
           dispatch={dispatch}
+          closeModal={() => setIsAdding(false)}
         />
       )}
 
-      {activeTab === "notes" && (
-        <Notes
-          selectedClass={selectedClass}
-          setIsModalOpen={setIsModalOpen}
-          setModalType={setModalType}
-          setEditingItem={setEditingItem}
-          dispatch={dispatch}
-        />
-      )}
-
-      {activeTab === "assignments" && (
-        <Assignments
-          selectedClass={selectedClass}
-          setIsModalOpen={setIsModalOpen}
-          setModalType={setModalType}
-          setEditingItem={setEditingItem}
-          dispatch={dispatch}
-        />
-      )}
-
-      {activeTab === "exams" && (
-        <Exams
-          selectedClass={selectedClass}
-          setIsModalOpen={setIsModalOpen}
-          setModalType={setModalType}
-          setEditingItem={setEditingItem}
-          dispatch={dispatch}
-        />
-      )}
-    </main>
+      <ul>
+        {currentItems.length === 0 ? (
+          <li>No {activeTab} yet.</li>
+        ) : (
+          currentItems.map((item) => (
+            <li key={item.id}>
+              {renderItemFields(item)}
+              <button onClick={() => handleEdit(item)}>Edit</button>
+              <button onClick={() => handleDelete(item.id)}>Delete</button>
+            </li>
+          ))
+        )}
+      </ul>
+    </div>
   );
 }
 

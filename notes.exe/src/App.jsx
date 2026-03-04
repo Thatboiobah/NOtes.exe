@@ -25,33 +25,49 @@ function App() {
     localStorage.setItem("studyPlannerData", JSON.stringify(state));
   }, [state]);
 
-  // UI STATES
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [isCalenderOpen, setIsCalenderOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeTab, setActiveTab] = useState("lectures");
   const [theme, setTheme] = useState("light");
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [isCalendarView, setIsCalendarView] = useState(false);
 
   const selectedClass = state.classes.find(
     (cls) => cls.id === selectedClassId
   );
 
-  const toggleNotifications = () => setIsNotificationOpen(prev => !prev);
-  const closeNotifications = () => setIsNotificationOpen(false);
-  const toggleCalendar = () => setIsCalendarView(prev => !prev);
-  const addClass = (name) => dispatch({ type: "ADD_CLASS", payload: name });
+  const toggleNotifications = () =>
+    setIsNotificationOpen((prev) => !prev);
+
+  const closeNotifications = () =>
+    setIsNotificationOpen(false);
+
+  const toggleCalender = () =>
+    setIsCalenderOpen((prev) => !prev);
+
+  const closeCalender = () =>
+    setIsCalenderOpen(false);
+
+  const addClass = (name) =>
+    dispatch({ type: "ADD_CLASS", payload: name });
+
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   return (
     <>
       <Header
         theme={theme}
-        toggleTheme={() => setTheme(theme === "light" ? "dark" : "light")}
+        toggleTheme={() =>
+          setTheme(theme === "light" ? "dark" : "light")
+        }
         onBellClick={toggleNotifications}
-        toggleCalendar={toggleCalendar} // fixed prop name
+        toggleCalendar={toggleCalender}
       />
 
       <Sidebar
@@ -81,12 +97,12 @@ function App() {
       />
 
       <CalendarPanel
-        isOpen={isCalendarView}
-        onClose={() => setIsCalendarView(false)}
+        isOpen={isCalenderOpen}
+        onClose={closeCalender}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
         state={state}
-        dispatch={dispatch} // centralized state
+        dispatch={dispatch}
       />
 
       {isModalOpen && (
