@@ -1,3 +1,4 @@
+// src/CalenderView.jsx
 import { useState } from "react";
 import "./calender.css";
 
@@ -5,15 +6,16 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
   if (!isOpen) return null;
 
   const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+
   const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
   const daysArray = Array.from({ length: lastDay }, (_, i) => i + 1);
 
   const [eventTitle, setEventTitle] = useState("");
   const [eventTime, setEventTime] = useState("");
 
-  const events = state.calenderEvents || {};
+  const events = state.calendarEvents || {};
 
   const handleDateClick = (day) => {
     const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -23,19 +25,29 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
   const addEvent = () => {
     if (!selectedDate || !eventTitle) return;
 
-    const newEvent = {
-      id: Date.now(),
-      title: eventTitle,
-      time: eventTime,
-    };
-
-    dispatch({
-      type: "ADD_CALENDAR_EVENT",
-      payload: { date: selectedDate, event: newEvent },
-    });
+    const newEvent = { id: Date.now(), title: eventTitle, time: eventTime };
+    dispatch({ type: "ADD_CALENDAR_EVENT", payload: { date: selectedDate, event: newEvent } });
 
     setEventTitle("");
     setEventTime("");
+  };
+
+  const deleteEvent = (eventId) => {
+    dispatch({ type: "DELETE_CALENDAR_EVENT", payload: { date: selectedDate, id: eventId } });
+  };
+
+  const goToPrevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(prev => prev - 1);
+    } else setCurrentMonth(prev => prev - 1);
+  };
+
+  const goToNextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(prev => prev + 1);
+    } else setCurrentMonth(prev => prev + 1);
   };
 
   return (
@@ -45,13 +57,21 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
 
         <h2>Calendar</h2>
 
+        <div className="month-navigation">
+          <button onClick={goToPrevMonth}>◀</button>
+          <span>{new Date(currentYear, currentMonth).toLocaleString("default", { month: "long", year: "numeric" })}</span>
+          <button onClick={goToNextMonth}>▶</button>
+        </div>
+
         <div className="calender-grid">
           {daysArray.map((day) => {
             const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            const isToday = formattedDate === today.toISOString().split("T")[0];
+
             return (
               <div
                 key={day}
-                className="calender-day"
+                className={`calender-day ${isToday ? "today" : ""}`}
                 onClick={() => handleDateClick(day)}
               >
                 {day}
@@ -66,8 +86,9 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
             <h3>Events for {selectedDate}</h3>
             {events[selectedDate]?.length > 0 ? (
               events[selectedDate].map((event) => (
-                <div key={event.id}>
-                  {event.time} - {event.title}
+                <div key={event.id} className="event-item">
+                  <span>{event.time} - {event.title}</span>
+                  <button onClick={() => deleteEvent(event.id)}>Delete</button>
                 </div>
               ))
             ) : (
@@ -85,7 +106,6 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
               value={eventTime}
               onChange={(e) => setEventTime(e.target.value)}
             />
-
             <button onClick={addEvent}>Add Event</button>
           </div>
         )}
