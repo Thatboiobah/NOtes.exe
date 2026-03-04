@@ -1,45 +1,154 @@
 import { useState } from "react";
 
 const calendarStyles = `
-.calender-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
-.cal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; position: relative; }
+.calender-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: var(--bg); 
+  z-index: 2000; 
+  display: flex; 
+  flex-direction: column; 
+  padding: 30px; /* Increased padding for Brutalist breathing room */
+  overflow-y: auto; 
+}
+
+/* Updated Header to align items to the bottom for a more structural look */
+.cal-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-end; 
+  margin-bottom: 24px; 
+  padding-bottom: 16px;
+  border-bottom: 4px solid var(--border);
+  position: relative; 
+}
+
 .cal-title-group { display: flex; flex-direction: column; }
-.cal-title-group h2 { font-size: 2.5rem; line-height: 1; text-transform: uppercase; margin-bottom: 4px; letter-spacing: -1px; color: var(--text); }
-.cal-subtitle { color: var(--accent); font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
-.cal-controls { display: flex; gap: 8px; align-items: center; }
-.cal-btn { background: transparent; border: 2px solid var(--border); color: var(--text); font-family: inherit; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; padding: 8px 16px; cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center; }
-.cal-btn:hover { background: var(--text); color: var(--bg); }
-.cal-btn.icon-btn { padding: 8px; width: 36px; height: 36px; }
-.cal-btn.filled { background: var(--accent); color: var(--accent-text); border-color: var(--border); }
-.cal-btn.filled:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
-.close-btn { position: absolute; top: -20px; right: 0; background: transparent; border: none; color: var(--text); font-family: inherit; font-size: 1rem; font-weight: bold; cursor: pointer; }
+.cal-title-group h2 { 
+  font-size: 3rem; 
+  line-height: 1; 
+  text-transform: uppercase; 
+  margin: 0; 
+  letter-spacing: -2px; 
+  color: var(--text); 
+}
+
+.cal-subtitle { 
+  color: var(--accent); 
+  font-size: 1rem; 
+  font-weight: 900; 
+  text-transform: uppercase; 
+  margin-bottom: 4px;
+}
+
+/* Control group with a larger gap */
+.cal-controls { 
+  display: flex; 
+  gap: 12px; 
+  align-items: center; 
+}
+
+.cal-btn { 
+  background: var(--surface); 
+  border: 4px solid var(--border); /* Thickened to 4px for consistency */
+  color: var(--text); 
+  font-family: inherit; 
+  font-weight: 900; 
+  font-size: 0.9rem; 
+  text-transform: uppercase; 
+  padding: 10px 20px; 
+  cursor: pointer; 
+  transition: all 0.05s; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+.cal-btn:hover { 
+  background: var(--text); 
+  color: var(--bg); 
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px var(--border);
+}
+
+.cal-btn.icon-btn { padding: 10px; width: 44px; height: 44px; }
+
+.cal-btn.filled { 
+  background: var(--accent); 
+  color: var(--accent-text); 
+}
+
+/* Removed old absolute close-btn logic as it now uses .cal-btn class */
+
 .cal-layout { display: flex; gap: 24px; flex: 1; min-height: 0; }
-.cal-grid-wrapper { flex: 1; display: flex; flex-direction: column; border: 2px solid var(--border); background: var(--border); gap: 2px; }
-.day-labels { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--border); gap: 2px; }
-.day-label { padding: 8px; text-align: center; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; background: var(--bg); color: var(--text); }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(80px, 1fr); background: var(--border); gap: 2px; flex: 1; }
-.cal-cell { background: var(--bg); padding: 8px; position: relative; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+
+.cal-grid-wrapper { 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  border: 4px solid var(--border); 
+  background: var(--border); 
+  gap: 4px; 
+}
+
+.day-labels { 
+  display: grid; 
+  grid-template-columns: repeat(7, 1fr); 
+  background: var(--border); 
+  gap: 4px; 
+}
+
+.day-label { 
+  padding: 12px; 
+  text-align: center; 
+  font-size: 0.85rem; 
+  font-weight: 900; 
+  text-transform: uppercase; 
+  background: var(--surface); 
+  color: var(--text); 
+}
+
+.cal-grid { 
+  display: grid; 
+  grid-template-columns: repeat(7, 1fr); 
+  grid-auto-rows: minmax(100px, 1fr); 
+  background: var(--border); 
+  gap: 4px; 
+  flex: 1; 
+}
+
+.cal-cell { 
+  background: var(--bg); 
+  padding: 12px; 
+  position: relative; 
+  cursor: pointer; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 6px; 
+}
+
 .cal-cell:hover { background: var(--surface); }
-.cal-cell.muted { background: var(--surface); opacity: 0.5; }
-body.dark .cal-cell.muted { background: #856a00; color: #ffeb85; opacity: 1; }
-.day-num { font-size: 1rem; font-weight: bold; display: block; }
-.cal-cell.focus .day-num { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
-.add-indicator { position: absolute; top: 8px; right: 8px; font-size: 1rem; color: var(--accent); font-weight: bold; display: none; }
-.cal-cell:hover .add-indicator, .cal-cell.focus .add-indicator { display: block; }
-.evt-stack { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; overflow-y: auto; }
-.evt-block { font-size: 0.6rem; padding: 2px 4px; font-weight: bold; text-transform: uppercase; border: 1px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.evt-blue { background: #3B82F6; color: #FFF; border-color: #FFF; }
-.evt-yellow { background: #FACC15; color: #111; border-color: #111; }
-.evt-red { background: #EF4444; color: #FFF; border-color: #FACC15; }
-.evt-green { background: #22C55E; color: #FFF; border-color: #FFF; }
-.evt-purple { background: #A855F7; color: #FFF; border-color: #FFF; }
-.cal-sidebar { width: 300px; background: var(--surface); border: 2px solid var(--border); padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
-.cal-sidebar h3 { font-size: 1.5rem; text-transform: uppercase; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
-.sidebar-events { display: flex; flex-direction: column; gap: 12px; flex: 1; }
-.sidebar-event-item { border: 2px solid var(--border); padding: 12px; background: var(--bg); }
-.sidebar-event-item h4 { font-size: 1rem; text-transform: uppercase; margin-bottom: 4px; }
-.sidebar-event-item p { font-size: 0.8rem; margin-bottom: 8px; font-weight: bold; opacity: 0.8; }
-.add-event-form { border-top: 2px dashed var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.cal-cell.muted { opacity: 0.3; filter: grayscale(1); }
+
+/* Sidebar & Form adjustments */
+.cal-sidebar { 
+  width: 350px; 
+  background: var(--surface); 
+  border: 4px solid var(--border); 
+  padding: 24px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px; 
+  overflow-y: auto; 
+}
+
+.add-event-form { 
+  border-top: 4px dashed var(--border); 
+  padding-top: 20px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+}
 `;
 
 function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, dispatch }) {
@@ -164,25 +273,33 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
   const monthName = new Date(currentYear, currentMonth).toLocaleString("en-US", { month: "long" });
 
   return (
+
     <div className="calender-overlay">
-      <style>{calendarStyles}</style>
-      <button className="close-btn" onClick={onClose}>[X] CLOSE</button>
+  <style>{calendarStyles}</style>
+  
+  {/* HEADER SECTION */}
+  <div className="cal-header">
+    <div className="cal-title-group">
+      <h2>{monthName} {currentYear}</h2>
+      <span className="cal-subtitle">Standard Semester Grid</span>
+    </div>
+    
+    <div className="cal-controls">
+      <button className="cal-btn icon-btn" onClick={() => changeMonth(-1)}>{"<"}</button>
+      <button className="cal-btn icon-btn" onClick={() => changeMonth(1)}>{">"}</button>
       
-      {/* HEADER SECTION */}
-      <div className="cal-header">
-        <div className="cal-title-group">
-          <h2>{monthName} {currentYear}</h2>
-          <span className="cal-subtitle">Standard Semester Grid</span>
-        </div>
-        
-        <div className="cal-controls">
-          <button className="cal-btn icon-btn" onClick={() => changeMonth(-1)}>{"<"}</button>
-          <button className="cal-btn icon-btn" onClick={() => changeMonth(1)}>{">"}</button>
-          <button className="cal-btn filled" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            {isSidebarOpen ? "HIDE PANEL" : "+ ADD ENTRY"}
-          </button>
-        </div>
-      </div>
+      {/* ADD ENTRY BUTTON */}
+      <button className="cal-btn filled" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+        {isSidebarOpen ? "HIDE PANEL" : "+ ADD ENTRY"}
+      </button>
+
+      {/* NEW CLOSE BUTTON POSITION */}
+      <button className="cal-btn" onClick={onClose}>
+        CLOSE [X]
+      </button>
+    </div>
+  </div>
+
 
       <div className="cal-layout">
         
