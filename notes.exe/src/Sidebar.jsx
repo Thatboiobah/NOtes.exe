@@ -11,6 +11,7 @@ function Sidebar({
         {classes.map((cls) => (
           <li
             key={cls.id}
+            className={cls.id === selectedClassId ? "selected" : ""}
             onClick={() => setSelectedClassId(cls.id)}
           >
             {cls.name}
@@ -18,7 +19,9 @@ function Sidebar({
         ))}
       </ul>
 
-      <button onClick={openAddClassModal}>+ Add Class</button>
+      <button className="add-class-btn" onClick={openAddClassModal}>
+        + ADD CLASS
+      </button>
     </aside>
   );
 }
