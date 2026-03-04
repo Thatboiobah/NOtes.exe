@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useReducer, useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -26,34 +27,21 @@ function App() {
   }, [state]);
 
   const [selectedDate, setSelectedDate] = useState(null);
-  const [isCalenderOpen, setIsCalenderOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isCalendarView, setIsCalendarView] = useState(false);
 
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeTab, setActiveTab] = useState("lectures");
   const [theme, setTheme] = useState("light");
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
-  const selectedClass = state.classes.find(
-    (cls) => cls.id === selectedClassId
-  );
+  const selectedClass = state.classes.find(cls => cls.id === selectedClassId);
 
-  const toggleNotifications = () =>
-    setIsNotificationOpen((prev) => !prev);
-
-  const closeNotifications = () =>
-    setIsNotificationOpen(false);
-
-  const toggleCalender = () =>
-    setIsCalenderOpen((prev) => !prev);
-
-  const closeCalender = () =>
-    setIsCalenderOpen(false);
-
-  const addClass = (name) =>
-    dispatch({ type: "ADD_CLASS", payload: name });
+  const toggleNotifications = () => setIsNotificationOpen(prev => !prev);
+  const closeNotifications = () => setIsNotificationOpen(false);
+  const addClass = (name) => dispatch({ type: "ADD_CLASS", payload: name });
 
   useEffect(() => {
     document.body.className = theme;
@@ -63,11 +51,9 @@ function App() {
     <>
       <Header
         theme={theme}
-        toggleTheme={() =>
-          setTheme(theme === "light" ? "dark" : "light")
-        }
+        toggleTheme={() => setTheme(theme === "light" ? "dark" : "light")}
         onBellClick={toggleNotifications}
-        toggleCalendar={toggleCalender}
+        toggleCalendar={() => setIsCalendarView(prev => !prev)}
       />
 
       <Sidebar
@@ -97,8 +83,8 @@ function App() {
       />
 
       <CalendarPanel
-        isOpen={isCalenderOpen}
-        onClose={closeCalender}
+        isOpen={isCalendarView}
+        onClose={() => setIsCalendarView(false)}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
         state={state}

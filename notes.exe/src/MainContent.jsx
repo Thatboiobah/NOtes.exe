@@ -1,80 +1,55 @@
-// src/MainContent.jsx
 import { useState } from "react";
 import Modal from "./Modal";
 
 function MainContent({ selectedClass, activeTab, setActiveTab, dispatch, setIsModalOpen, setModalType, setEditingItem }) {
   const [isAdding, setIsAdding] = useState(false);
 
-  // Assertive Empty State
   if (!selectedClass) {
     return (
       <div className="main-content">
         <div className="empty-state">
-          Select a class to get started
+          SELECT A CLASS TO <br /> GET STARTED, USER
         </div>
       </div>
     );
   }
 
   const tabs = ["lectures", "notes", "assignments", "exams"];
-  const currentItems = selectedClass[activeTab];
-
-  const handleAddClick = () => {
-    setIsAdding(true);
-  };
+  const currentItems = selectedClass[activeTab] || [];
 
   const handleEdit = (item) => {
     setEditingItem(item);
-    setModalType(`edit-${activeTab.slice(0, -1)}`); // e.g., edit-lecture
+    setModalType(`edit-${activeTab.slice(0, -1)}`);
     setIsModalOpen(true);
   };
 
   const handleDelete = (id) => {
-    dispatch({ type: `DELETE_${activeTab.toUpperCase().slice(0, -1)}`, payload: { classId: selectedClass.id, id } });
+    dispatch({ 
+      type: `DELETE_${activeTab.toUpperCase().slice(0, -1)}`, 
+      payload: { classId: selectedClass.id, id } 
+    });
   };
 
-  // Structured fields for the brutalist cards
   const renderItemFields = (item) => {
     switch (activeTab) {
-      case "lectures":
-        return (
-          <>
-            <div className="item-title">{item.title}</div>
-            <div>{item.time} | {item.venue}</div>
-          </>
-        );
-      case "notes":
-        return (
-          <>
-            <div className="item-title">{item.title}</div>
-            <div>{item.description}</div>
-          </>
-        );
-      case "assignments":
-        return (
-          <>
-            <div className="item-title">{item.title}</div>
-            <div>Due: {item.dueDate}</div>
-          </>
-        );
-      case "exams":
-        return (
-          <>
-            <div className="item-title">{item.title}</div>
-            <div>{item.date} @ {item.time} | {item.venue}</div>
-          </>
-        );
-      default:
-        return <div className="item-title">{item.title}</div>;
+      case "lectures": return `${item.title} | ${item.time} | ${item.venue}`;
+      case "notes": return `${item.title} | ${item.description?.slice(0, 30)}...`;
+      case "assignments": return `${item.title} | DUE: ${item.dueDate} [${item.status}]`;
+      case "exams": return `${item.title} | ${item.date} @ ${item.time}`;
+      default: return item.title;
     }
   };
 
   return (
     <div className="main-content">
-      {/* Bold Class Heading */}
       <div className="class-header">
-        <span>{selectedClass.name}</span>
-        <button onClick={handleAddClick}>+ ADD {activeTab.slice(0, -1).toUpperCase()}</button>
+        <h1>{selectedClass.name}</h1>
+        <button className="cal-btn filled" onClick={() => {
+          setModalType(`add-${activeTab.slice(0, -1)}`);
+          setIsModalOpen(true);
+        }}>
+          + ADD {activeTab.toUpperCase().slice(0, -1)}
+        </button>
       </div>
 
       <div className="tabs">
@@ -82,36 +57,28 @@ function MainContent({ selectedClass, activeTab, setActiveTab, dispatch, setIsMo
           <button
             key={tab}
             className={tab === activeTab ? "active-tab" : ""}
-            onClick={() => {
-              setActiveTab(tab);
-              setIsAdding(false); // Fixes add form persistence bug
-            }}
+            onClick={() => setActiveTab(tab)}
           >
-            {tab.toUpperCase()}
+            {tab}
           </button>
         ))}
       </div>
 
-      {isAdding && (
-        <Modal
-          modalType={`add-${activeTab.slice(0, -1)}`} // add-lecture, add-note, add-assignment, add-exam
-          selectedClass={selectedClass}
-          dispatch={dispatch}
-          closeModal={() => setIsAdding(false)}
-        />
-      )}
-
       <ul>
         {currentItems.length === 0 ? (
-          <li>No {activeTab} logged.</li>
+          <div className="empty-notes" style={{padding: '40px', border: '4px dashed var(--border)', textAlign: 'center'}}>
+            NO {activeTab.toUpperCase()} LOGGED YET.
+          </div>
         ) : (
           currentItems.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} className={item.status === "completed" ? "completed-item" : ""}>
               <div className="item-details">
-                {renderItemFields(item)}
+                <span className="item-title">{renderItemFields(item)}</span>
               </div>
-              <button onClick={() => handleEdit(item)}>Edit</button>
-              <button onClick={() => handleDelete(item.id)}>Delete</button>
+              <div style={{display: 'flex', gap: '8px'}}>
+                <button className="cal-btn" onClick={() => handleEdit(item)}>EDIT</button>
+                <button className="cal-btn" onClick={() => handleDelete(item.id)}>DEL</button>
+              </div>
             </li>
           ))
         )}
