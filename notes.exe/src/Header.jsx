@@ -16,15 +16,15 @@ function Header({
         <span>{formattedDate}</span>
 
         <button onClick={onBellClick}>
-          🔔 Notifications
+          🔔
         </button>
 
         <button onClick={toggleCalendar}>
-          Calender
+          📅
         </button>
 
         <button onClick={toggleTheme}>
-          Toggle Theme
+          🌗
         </button>
       </div>
     </header>

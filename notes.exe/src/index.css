@@ -234,6 +234,22 @@ button, .cal-btn, .add-class-btn {
   position: relative;
 }
 
+.danger-btn {
+  background-color: #EF4444;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.danger-btn:hover {
+  background-color: var(--text);
+  color: var(--surface);
+}
+
+.completed-item {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
 /* THE NEO-BRUTALIST LIFT */
 button:hover, .cal-btn:hover, .add-class-btn:hover {
   background-color: var(--accent);

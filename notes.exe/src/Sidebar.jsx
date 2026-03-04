@@ -1,10 +1,17 @@
-// src/Sidebar.jsx
 function Sidebar({
   classes,
   selectedClassId,
   setSelectedClassId,
   openAddClassModal
 }) {
+
+  const clearDatabase = () => {
+    if (window.confirm("ARE YOU SURE YOU WANT TO CLEAR ALL DATA?")) {
+      localStorage.removeItem("studyPlannerData");
+      window.location.reload();
+    }
+  };
+
   return (
     <aside>
       <ul>
@@ -18,6 +25,10 @@ function Sidebar({
           </li>
         ))}
       </ul>
+
+      <button className="add-class-btn danger-btn" onClick={clearDatabase}>
+        CLEAR DATABASE
+      </button>
 
       <button className="add-class-btn" onClick={openAddClassModal}>
         + ADD CLASS

@@ -28,7 +28,6 @@ function App() {
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [isCalendarView, setIsCalendarView] = useState(false);
-
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeTab, setActiveTab] = useState("lectures");
   const [theme, setTheme] = useState("light");
@@ -37,11 +36,20 @@ function App() {
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
-  const selectedClass = state.classes.find(cls => cls.id === selectedClassId);
+  const selectedClass = state.classes.find(
+    (cls) => cls.id === selectedClassId
+  );
 
-  const toggleNotifications = () => setIsNotificationOpen(prev => !prev);
-  const closeNotifications = () => setIsNotificationOpen(false);
-  const addClass = (name) => dispatch({ type: "ADD_CLASS", payload: name });
+  const toggleNotifications = () =>
+    setIsNotificationOpen((prev) => !prev);
+
+  const closeNotifications = () =>
+    setIsNotificationOpen(false);
+
+  const addClass = (name) => {
+    dispatch({ type: "ADD_CLASS", payload: name });
+    setIsModalOpen(false);   // ✅ important
+  };
 
   useEffect(() => {
     document.body.className = theme;
@@ -51,9 +59,13 @@ function App() {
     <>
       <Header
         theme={theme}
-        toggleTheme={() => setTheme(theme === "light" ? "dark" : "light")}
+        toggleTheme={() =>
+          setTheme(theme === "light" ? "dark" : "light")
+        }
         onBellClick={toggleNotifications}
-        toggleCalendar={() => setIsCalendarView(prev => !prev)}
+        toggleCalendar={() =>
+          setIsCalendarView((prev) => !prev)
+        }
       />
 
       <Sidebar
@@ -61,7 +73,8 @@ function App() {
         selectedClassId={selectedClassId}
         setSelectedClassId={setSelectedClassId}
         openAddClassModal={() => {
-          setModalType("addClass");
+          setModalType("add-class");
+          setEditingItem(null);   // ✅ reset editing
           setIsModalOpen(true);
         }}
       />
@@ -91,7 +104,7 @@ function App() {
         dispatch={dispatch}
       />
 
-      {isModalOpen && (
+      {isModalOpen && modalType && (
         <Modal
           modalType={modalType}
           editingItem={editingItem}
