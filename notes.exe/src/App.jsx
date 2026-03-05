@@ -7,7 +7,6 @@ import Modal from "./Modal";
 import NotificationPanel from "./NotificationPanel";
 import CalendarPanel from "./CalenderView";
 import { appReducer, initialState } from "./reducer/appReducer";
-const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 function App() {
   const [state, dispatch] = useReducer(
@@ -37,6 +36,9 @@ function App() {
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
+  /* NEW SIDEBAR STATE */
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   const selectedClass = state.classes.find(
     (cls) => cls.id === selectedClassId
   );
@@ -49,12 +51,8 @@ function App() {
 
   const addClass = (name) => {
     dispatch({ type: "ADD_CLASS", payload: name });
-    setIsModalOpen(false);  
+    setIsModalOpen(false);
   };
-
-  const toggleSidebar = () => {
-  setIsSidebarOpen(prev => !prev);
-};
 
   useEffect(() => {
     document.body.className = theme;
@@ -71,21 +69,21 @@ function App() {
         toggleCalendar={() =>
           setIsCalendarView((prev) => !prev)
         }
-        toggleSidebar={toggleSidebar}   
+        toggleSidebar={() =>
+          setIsSidebarOpen((prev) => !prev)
+        }
       />
-
-
 
       <Sidebar
         classes={state.classes}
         selectedClassId={selectedClassId}
         setSelectedClassId={setSelectedClassId}
+        isSidebarOpen={isSidebarOpen}
         openAddClassModal={() => {
           setModalType("add-class");
-          setEditingItem(null); 
+          setEditingItem(null);
           setIsModalOpen(true);
         }}
-        isOpen={isSidebarOpen} 
       />
 
       <MainContent

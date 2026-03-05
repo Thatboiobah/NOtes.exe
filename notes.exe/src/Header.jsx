@@ -3,7 +3,7 @@ function Header({
   toggleTheme,
   onBellClick,
   toggleCalendar,
-  toggleSidebar   // NEW
+  toggleSidebar  
 }) {
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-GB");

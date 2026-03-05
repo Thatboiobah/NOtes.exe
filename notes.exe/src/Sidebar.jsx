@@ -3,7 +3,7 @@ function Sidebar({
   selectedClassId,
   setSelectedClassId,
   openAddClassModal,
-  isOpen
+  isSidebarOpen
 }) {
 
   const clearDatabase = () => {
@@ -14,9 +14,8 @@ function Sidebar({
   };
 
   return (
-    <aside className={isOpen ? "open" : ""}>
-      
-      {/* Scrollable class list */}
+    <aside className={isSidebarOpen ? "sidebar-open" : "sidebar-closed"}>
+
       <ul className="class-list">
         {classes.map((cls) => (
           <li
@@ -29,8 +28,8 @@ function Sidebar({
         ))}
       </ul>
 
-      {/* Fixed bottom buttons */}
-      <div className="sidebar-footer">
+      <div className="sidebar-buttons">
+
         <button
           className="add-class-btn danger-btn"
           onClick={clearDatabase}
@@ -44,6 +43,7 @@ function Sidebar({
         >
           + ADD CLASS
         </button>
+
       </div>
 
     </aside>
