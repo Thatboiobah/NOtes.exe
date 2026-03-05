@@ -8,7 +8,7 @@ function MainContent({ selectedClass, activeTab, setActiveTab, dispatch, setIsMo
     return (
       <div className="main-content">
         <div className="empty-state">
-          SELECT A CLASS TO <br /> GET STARTED, USER
+         SELECT A CLASS TO <br /> GET STARTED!
         </div>
       </div>
     );
@@ -67,7 +67,7 @@ function MainContent({ selectedClass, activeTab, setActiveTab, dispatch, setIsMo
       <ul>
         {currentItems.length === 0 ? (
           <div className="empty-notes" style={{padding: '40px', border: '4px dashed var(--border)', textAlign: 'center'}}>
-            NO {activeTab.toUpperCase()} LOGGED YET.
+            NO {activeTab.toUpperCase()} ADDED YET.
           </div>
         ) : (
           currentItems.map((item) => (

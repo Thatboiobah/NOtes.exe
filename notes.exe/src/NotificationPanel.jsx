@@ -142,7 +142,7 @@ function NotificationPanel({ isOpen, onClose, classes }) {
           {notifications.overdueAssignments.length === 0 &&
            notifications.upcomingAssignments.length === 0 &&
            notifications.upcomingExams.length === 0 && (
-             <div className="empty-notes">System Clear: No Pending Alerts</div>
+             <div className="empty-notes">No Pending Alerts</div>
           )}
         </div>
       </div>

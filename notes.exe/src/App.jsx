@@ -7,6 +7,7 @@ import Modal from "./Modal";
 import NotificationPanel from "./NotificationPanel";
 import CalendarPanel from "./CalenderView";
 import { appReducer, initialState } from "./reducer/appReducer";
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 function App() {
   const [state, dispatch] = useReducer(
@@ -30,12 +31,11 @@ function App() {
   const [isCalendarView, setIsCalendarView] = useState(false);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeTab, setActiveTab] = useState("lectures");
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const selectedClass = state.classes.find(
     (cls) => cls.id === selectedClassId
@@ -52,35 +52,41 @@ function App() {
     setIsModalOpen(false);  
   };
 
+  const toggleSidebar = () => {
+  setIsSidebarOpen(prev => !prev);
+};
+
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
 
   return (
     <>
-    <Header
-  theme={theme}
-  toggleTheme={() =>
-    setTheme(theme === "light" ? "dark" : "light")
-  }
-  onBellClick={toggleNotifications}
-  toggleCalendar={() =>
-    setIsCalendarView(prev => !prev)
-  }
-  toggleSidebar={() => setIsSidebarOpen(prev => !prev)}
-/>
+      <Header
+        theme={theme}
+        toggleTheme={() =>
+          setTheme(theme === "light" ? "dark" : "light")
+        }
+        onBellClick={toggleNotifications}
+        toggleCalendar={() =>
+          setIsCalendarView((prev) => !prev)
+        }
+        toggleSidebar={toggleSidebar}   
+      />
+
+
 
       <Sidebar
-  classes={state.classes}
-  selectedClassId={selectedClassId}
-  setSelectedClassId={setSelectedClassId}
-  openAddClassModal={() => {
-    setModalType("add-class");
-    setEditingItem(null);
-    setIsModalOpen(true);
-  }}
-  isSidebarOpen={isSidebarOpen}
-/>
+        classes={state.classes}
+        selectedClassId={selectedClassId}
+        setSelectedClassId={setSelectedClassId}
+        openAddClassModal={() => {
+          setModalType("add-class");
+          setEditingItem(null); 
+          setIsModalOpen(true);
+        }}
+        isOpen={isSidebarOpen} 
+      />
 
       <MainContent
         selectedClass={selectedClass}

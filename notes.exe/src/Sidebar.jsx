@@ -3,7 +3,7 @@ function Sidebar({
   selectedClassId,
   setSelectedClassId,
   openAddClassModal,
-  isSidebarOpen
+  isOpen
 }) {
 
   const clearDatabase = () => {
@@ -14,8 +14,10 @@ function Sidebar({
   };
 
   return (
-    <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-      <ul>
+    <aside className={isOpen ? "open" : ""}>
+      
+      {/* Scrollable class list */}
+      <ul className="class-list">
         {classes.map((cls) => (
           <li
             key={cls.id}
@@ -27,13 +29,23 @@ function Sidebar({
         ))}
       </ul>
 
-      <button className="danger-btn" onClick={clearDatabase}>
-        CLEAR DATABASE
-      </button>
+      {/* Fixed bottom buttons */}
+      <div className="sidebar-footer">
+        <button
+          className="add-class-btn danger-btn"
+          onClick={clearDatabase}
+        >
+          CLEAR DATABASE
+        </button>
 
-      <button className="add-class-btn" onClick={openAddClassModal}>
-        + ADD CLASS
-      </button>
+        <button
+          className="add-class-btn"
+          onClick={openAddClassModal}
+        >
+          + ADD CLASS
+        </button>
+      </div>
+
     </aside>
   );
 }

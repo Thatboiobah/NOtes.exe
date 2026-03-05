@@ -15,7 +15,7 @@ function Header({
         <button className="hamburger-btn" onClick={toggleSidebar}>
           ☰
         </button>
-        <h1>notes.exe</h1>
+        <b>notes.exe</b>
       </div>
 
       {/* Right Side */}
