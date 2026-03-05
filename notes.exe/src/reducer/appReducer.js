@@ -41,7 +41,6 @@ export function appReducer(state, action) {
       };
     }
 
-    // UNIVERSAL DELETE HANDLER
     case "DELETE_LECTURE":
     case "DELETE_NOTE":
     case "DELETE_ASSIGNMENT":

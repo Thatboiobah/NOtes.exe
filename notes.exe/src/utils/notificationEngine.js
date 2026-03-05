@@ -8,7 +8,6 @@ export function generateNotifications(classes) {
 
   classes.forEach((cls) => {
 
-    // ================= ASSIGNMENTS =================
     cls.assignments.forEach((assignment) => {
       const due = new Date(assignment.dueDate);
 
@@ -29,7 +28,6 @@ export function generateNotifications(classes) {
       }
     });
 
-    // ================= EXAMS =================
     cls.exams.forEach((exam) => {
       const examDateTime = new Date(`${exam.date}T${exam.time}`);
       const diff = (examDateTime - now) / (1000 * 60 * 60 * 24);

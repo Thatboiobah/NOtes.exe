@@ -162,7 +162,6 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
   const [eventTime, setEventTime] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // --- Date Math ---
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
@@ -180,7 +179,6 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
   }));
 
   const totalCells = prevBlanks.length + currentDays.length;
-  // Ensure we always fill out complete weeks (either 35 or 42 cells total)
   const nextBlanksCount = totalCells > 35 ? 42 - totalCells : 35 - totalCells;
   
   const nextBlanks = Array.from({ length: nextBlanksCount }, (_, i) => ({
@@ -191,17 +189,14 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
 
   const allCells = [...prevBlanks, ...currentDays, ...nextBlanks];
 
-  // --- Smart Event Aggregator ---
   const derivedEvents = {};
 
-  // 1. Map manual calendar events (Blue)
   if (state.calendarEvents) {
     Object.entries(state.calendarEvents).forEach(([date, evts]) => {
       derivedEvents[date] = evts.map(e => ({ ...e, color: "evt-blue", tag: "Manual" }));
     });
   }
 
-  // 2. Map Assignments & Exams automatically
   state.classes.forEach(cls => {
     cls.assignments.forEach(a => {
       if (a.dueDate) {
@@ -230,7 +225,6 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
     });
   });
 
-  // --- Handlers ---
   const handleDateClick = (dayStr) => {
     setSelectedDate(dayStr);
     setIsSidebarOpen(true);
@@ -277,11 +271,10 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
     <div className="calender-overlay">
   <style>{calendarStyles}</style>
   
-  {/* HEADER SECTION */}
   <div className="cal-header">
     <div className="cal-title-group">
       <h2>{monthName} {currentYear}</h2>
-      <span className="cal-subtitle">Standard Semester Grid</span>
+      <span className="cal-subtitle">Schedule</span>
     </div>
     
     <div className="cal-controls">
@@ -295,7 +288,7 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
 
       {/* NEW CLOSE BUTTON POSITION */}
       <button className="cal-btn" onClick={onClose}>
-        CLOSE [X]
+        CLOSE
       </button>
     </div>
   </div>
@@ -303,7 +296,7 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
 
       <div className="cal-layout">
         
-        {/* GRID SECTION */}
+        
         <div className="cal-grid-wrapper">
           <div className="day-labels">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(d => (
@@ -313,7 +306,6 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
 
           <div className="cal-grid">
             {allCells.map((cell, idx) => {
-              // Calculate correct date string based on cell type
               let targetMonth = currentMonth;
               let targetYear = currentYear;
               
@@ -353,7 +345,6 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
           </div>
         </div>
 
-        {/* SIDEBAR FOR ADDING/DELETING EVENTS */}
         {isSidebarOpen && (
           <div className="cal-sidebar">
             <h3>{selectedDate ? selectedDate : "SELECT A DATE"}</h3>
@@ -370,12 +361,12 @@ function CalendarPanel({ isOpen, onClose, selectedDate, setSelectedDate, state, 
                   </div>
                 ))
               ) : (
-                <p>No events logged.</p>
+                <p>No events.</p>
               )}
             </div>
 
             <div className="add-event-form">
-              <h4>+ NEW MANUAL EVENT</h4>
+              <h4>ADD NEW EVENT + </h4>
               <input
                 type="text"
                 placeholder="EVENT TITLE"

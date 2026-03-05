@@ -30,11 +30,12 @@ function App() {
   const [isCalendarView, setIsCalendarView] = useState(false);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [activeTab, setActiveTab] = useState("lectures");
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("dark");
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const selectedClass = state.classes.find(
     (cls) => cls.id === selectedClassId
@@ -48,7 +49,7 @@ function App() {
 
   const addClass = (name) => {
     dispatch({ type: "ADD_CLASS", payload: name });
-    setIsModalOpen(false);   // ✅ important
+    setIsModalOpen(false);  
   };
 
   useEffect(() => {
@@ -57,16 +58,17 @@ function App() {
 
   return (
     <>
-      <Header
-        theme={theme}
-        toggleTheme={() =>
-          setTheme(theme === "light" ? "dark" : "light")
-        }
-        onBellClick={toggleNotifications}
-        toggleCalendar={() =>
-          setIsCalendarView((prev) => !prev)
-        }
-      />
+    <Header
+  theme={theme}
+  toggleTheme={() =>
+    setTheme(theme === "light" ? "dark" : "light")
+  }
+  onBellClick={toggleNotifications}
+  toggleCalendar={() =>
+    setIsCalendarView(prev => !prev)
+  }
+  toggleSidebar={() => setIsSidebarOpen(prev => !prev)}
+/>
 
       <Sidebar
         classes={state.classes}
@@ -74,7 +76,7 @@ function App() {
         setSelectedClassId={setSelectedClassId}
         openAddClassModal={() => {
           setModalType("add-class");
-          setEditingItem(null);   // ✅ reset editing
+          setEditingItem(null); 
           setIsModalOpen(true);
         }}
       />
