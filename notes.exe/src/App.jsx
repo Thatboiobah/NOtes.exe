@@ -71,15 +71,16 @@ function App() {
 />
 
       <Sidebar
-        classes={state.classes}
-        selectedClassId={selectedClassId}
-        setSelectedClassId={setSelectedClassId}
-        openAddClassModal={() => {
-          setModalType("add-class");
-          setEditingItem(null); 
-          setIsModalOpen(true);
-        }}
-      />
+  classes={state.classes}
+  selectedClassId={selectedClassId}
+  setSelectedClassId={setSelectedClassId}
+  openAddClassModal={() => {
+    setModalType("add-class");
+    setEditingItem(null);
+    setIsModalOpen(true);
+  }}
+  isSidebarOpen={isSidebarOpen}
+/>
 
       <MainContent
         selectedClass={selectedClass}

@@ -2,7 +2,8 @@ function Sidebar({
   classes,
   selectedClassId,
   setSelectedClassId,
-  openAddClassModal
+  openAddClassModal,
+  isSidebarOpen
 }) {
 
   const clearDatabase = () => {
@@ -13,7 +14,7 @@ function Sidebar({
   };
 
   return (
-    <aside>
+    <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
       <ul>
         {classes.map((cls) => (
           <li
@@ -26,7 +27,7 @@ function Sidebar({
         ))}
       </ul>
 
-      <button className="add-class-btn danger-btn" onClick={clearDatabase}>
+      <button className="danger-btn" onClick={clearDatabase}>
         CLEAR DATABASE
       </button>
 

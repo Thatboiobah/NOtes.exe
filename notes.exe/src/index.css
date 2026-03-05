@@ -77,6 +77,24 @@ header span {
   margin-right: 16px;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hamburger-btn {
+  display: none;
+  font-size: 1.5rem;
+}
+
+
 /* =========================================
    SIDEBAR
 ========================================= */
@@ -331,37 +349,63 @@ input:focus, textarea:focus {
    MOBILE RESPONSIVENESS
 ========================================= */
 @media (max-width: 768px) {
+
   #root {
     display: flex;
     flex-direction: column;
   }
-  
+
   header {
-    flex-wrap: wrap;
-    height: auto;
-    padding: 16px;
-    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
   }
 
+  .hamburger-btn {
+    display: block;
+  }
+
+  header h1 {
+    font-size: 1.2rem;
+  }
+
+  header span {
+    display: none; /* Hide date on small screens */
+  }
+
+  /* Sidebar becomes overlay drawer */
   aside {
-    display: none; 
+    position: fixed;
+    top: 70px;
+    left: -100%;
+    width: 240px;
+    height: calc(100vh - 70px);
+    background-color: var(--surface);
+    transition: left 0.3s ease;
+    z-index: 2000;
+  }
+
+  aside.open {
+    left: 0;
   }
 
   .main-content {
-    padding: 16px;
+    padding: 20px;
+  }
+
+  .class-header {
+    font-size: 1.8rem;
+    text-align: center;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .tabs {
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .main-content li {
-    grid-template-columns: 1fr; 
-  }
-
-  button {
-    min-height: 44px; 
+    grid-template-columns: 1fr;
+    text-align: center;
   }
 }
