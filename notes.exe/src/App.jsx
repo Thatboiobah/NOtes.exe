@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useReducer, useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -38,6 +37,8 @@ function App() {
 
   /* NEW SIDEBAR STATE */
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+   const [sidebarOpen, setSidebarOpen] = useState(true);
+  
 
   const selectedClass = state.classes.find(
     (cls) => cls.id === selectedClassId
@@ -74,7 +75,8 @@ function App() {
         }
       />
 
-      <Sidebar
+      <Sidebar  
+      sidebarOpen={sidebarOpen}
         classes={state.classes}
         selectedClassId={selectedClassId}
         setSelectedClassId={setSelectedClassId}
@@ -87,6 +89,7 @@ function App() {
       />
 
       <MainContent
+       className="main-content"
         selectedClass={selectedClass}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -111,6 +114,13 @@ function App() {
         dispatch={dispatch}
       />
 
+       <button
+          className="hamburger-btn"
+          onClick={() => setSidebarOpen(prev => !prev)}
+        >
+          <i className="fi fi-bs-menu"></i>
+        </button>
+
       {isModalOpen && modalType && (
         <Modal
           modalType={modalType}
@@ -125,4 +135,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;                                                                                                                                                                                                                                                                                  
